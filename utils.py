@@ -27,6 +27,19 @@ def delete_local_branch(branch):
     print(f"Executing: {command}")  # 添加打印语句
     return run_command(command)
 
+def read_reviewers_from_file(file_path):
+    """从文件中读取 reviewer"""
+    if not file_path:
+        return ''
+    try:
+        with open(file_path, 'r') as file:
+            reviewers = file.readline().strip()
+        return reviewers
+    except FileNotFoundError:
+        raise Exception(f"Reviewer file not found: {file_path}")
+    except Exception as e:
+        raise Exception(f"Error reading reviewer file: {e}")
+
 def create_pr(head, base, title, body='', reviewer=''):  # 新增 reviewer 参数
     """提交PR"""
     # 检查 head 和 base 分支的 SHA 值

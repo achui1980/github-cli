@@ -6,6 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'click',
+        'PyInstaller',  # 确保 PyInstaller 在依赖项中
     ],
     python_requires='>=3.8',  # 添加最低Python版本要求
     entry_points={
@@ -14,7 +15,3 @@ setup(
         ],
     },
 )
-# 添加 following to show how to upload to pip repo
-# Upload to pip repo command:
-# python setup.py sdist bdist_wheel
-# twine upload dist/*
