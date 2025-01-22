@@ -24,24 +24,13 @@ def create_branch_command(source_branch, new_branch):
 @click.argument('source')  # 修改: head -> source
 @click.argument('target')  # 修改: base -> target
 @click.option('--body', default='', help='PR body content')
-def create_pr_command(source, target, body):
+@click.option('--reviewer', default='', help='Reviewer for the PR')  # 新增 reviewer 参数
+def create_pr_command(source, target, body, reviewer):
     """提交PR"""
     check_git_repository(None, None, None)  # 默认检查Git仓库
     # 获取最新的commit message作为title
     title = run_command("git log -1 --pretty=%B").strip()
-    # 检查 source 分支是否存在并且有新的提交
-    run_command(f"git fetch origin {source}")
-    run_command(f"git fetch origin {target}")
-    # 确保 source 分支有新的提交
-    run_command(f"git checkout {source}")
-    run_command(f"git pull origin {source}")
-    # 检查是否有新的提交
-    diff_command = f"git diff --name-only {target} {source}"
-    diff_output = run_command(diff_command).strip()
-    if not diff_output:
-        click.echo(f"Error: No commits between {target} and {source}.")
-        click.exit(1)
-    result = create_pr(source, target, title, body)
+    result = create_pr(source, target, title, body, reviewer)  # 传递 reviewer 参数
     click.echo(result)
 
 @github_cli.command(name='del-branch')

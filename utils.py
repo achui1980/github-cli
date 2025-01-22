@@ -27,7 +27,7 @@ def delete_local_branch(branch):
     print(f"Executing: {command}")  # 添加打印语句
     return run_command(command)
 
-def create_pr(head, base, title, body=''):
+def create_pr(head, base, title, body='', reviewer=''):  # 新增 reviewer 参数
     """提交PR"""
     # 检查 head 和 base 分支的 SHA 值
     head_sha = run_command(f"git rev-parse {head}").strip()
@@ -35,6 +35,8 @@ def create_pr(head, base, title, body=''):
     if not head_sha or not base_sha:
         raise Exception("Head or base SHA is blank.")
     command = f"gh pr create --head {head} --base {base} --title '{title}' --body '{body}'"
+    if reviewer:
+        command += f" --reviewer {reviewer}"  # 添加 reviewer 参数
     return run_command(command)
 
 def is_git_repository():
