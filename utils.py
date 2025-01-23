@@ -40,16 +40,26 @@ def read_reviewers_from_file(file_path):
     except Exception as e:
         raise Exception(f"Error reading reviewer file: {e}")
 
-def create_pr(head, base, title, body='', reviewer=''):  # 新增 reviewer 参数
+def create_pr(head, base, title, body='', reviewer=''):
     """提交PR"""
-    # 检查 head 和 base 分支的 SHA 值
     head_sha = run_command(f"git rev-parse {head}").strip()
     base_sha = run_command(f"git rev-parse {base}").strip()
     if not head_sha or not base_sha:
         raise Exception("Head or base SHA is blank.")
-    command = f"gh pr create --head {head} --base {base} --title '{title}' --body '{body}'"
+    
+    # 使用引号包裹参数，避免空格问题
+    command = ['gh', 'pr', 'create',
+              '--head', head,
+              '--base', base,
+              '--title', title]
+    
+    if body:
+        command.extend(['--body', body])
+    
     if reviewer:
-        command += f" --reviewer {reviewer}"  # 添加 reviewer 参数
+        command.extend(['--reviewer', reviewer])
+    
+    # 使用 subprocess.run 执行命令列表
     return run_command(command)
 
 def is_git_repository():
@@ -59,3 +69,15 @@ def is_git_repository():
         return True
     except subprocess.CalledProcessError:
         return False
+
+def add_reviewers_to_pr(pr_number, reviewers):
+    """添加reviewers到已存在的PR"""
+    if not reviewers:
+        return "No reviewers specified"
+    
+    command = [
+        'gh', 'pr', 'edit',
+        str(pr_number),
+        '--add-reviewer', reviewers
+    ]
+    return run_command(command)

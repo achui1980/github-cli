@@ -59,3 +59,17 @@ qgh pr feature-branch main --body "This PR adds a new feature."
 ```bash 
 qgh delete feature-branch
 ```
+
+### 为已知PR添加reviewer
+#### 参数说明
+- <pr_number>: PR编号
+- <reviewers>: 需要添加review的人
+#### 示例
+
+```bash
+# 为PR #123添加单个reviewer
+qgh add-reviewer 123 username
+
+# 为PR #123添加多个reviewer
+qgh add-reviewer 123 "username1,username2,username3"
+```

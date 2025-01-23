@@ -1,5 +1,5 @@
 import click
-from utils import create_branch, create_pr, is_git_repository, delete_local_branch, read_reviewers_from_file, run_command
+from utils import add_reviewers_to_pr, create_branch, create_pr, is_git_repository, delete_local_branch, read_reviewers_from_file, run_command
 @click.group()
 def github_cli():
     """GitHub CLI工具"""
@@ -35,7 +35,18 @@ def create_pr_command(source, target, body, reviewer, reviewer_file):
     if reviewer_file:
         file_reviewers = read_reviewers_from_file(reviewer_file)
         reviewer = ','.join([reviewer, file_reviewers]) if reviewer else file_reviewers
+    if body == '':
+        body = title
     result = create_pr(source, target, title, body, reviewer)  # 传递 reviewer 参数
+    click.echo(result)
+
+@github_cli.command(name='add-reviewer')
+@click.argument('pr_number', type=int)
+@click.argument('reviewers')
+def add_reviewer_command(pr_number, reviewers):
+    """为已存在的PR添加reviewer"""
+    check_git_repository(None, None, None)
+    result = add_reviewers_to_pr(pr_number, reviewers)
     click.echo(result)
 
 @github_cli.command(name='del-branch')
